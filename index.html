@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> -->
+    <title>小圆圆的温馨世界</title>
+    <link type="text/css" rel="stylesheet" href="./css/default.css">
+    <script type="text/javascript" src="./css/jquery.min.js"></script>
+    <script type="text/javascript" src="./css/jscex.min.js"></script>
+    <script type="text/javascript" src="./css/jscex-parser.js"></script>
+    <script type="text/javascript" src="./css/jscex-jit.js"></script>
+    <script type="text/javascript" src="./css/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="./css/jscex-async.min.js"></script>
+    <script type="text/javascript" src="./css/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="./css/functions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/tree.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/clock.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/mouseclick.js" charset="utf-8"></script>
+    <!-- <script type="text/javascript" src="./js/garden.js" charset="utf-8"></script> -->
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <div id="wrap">
+            <div id="text">
+                <div id="code">
+                    <span class="say">
+                        <h1>祝小圆圆女生节快乐！！！</h1>
+                    </span><br><br>
+                    <span class="say">我希望有个如你一般的人。</span><br> <br>
+                    <span class="say">如这山间清晨一般明亮清爽，</span><br><br>
+                    <span class="say">如奔赴古城道路上阳光一般的人，</span><br><br>
+                    <span class="say">温暖而不炙热，覆盖我所有肌肤。</span><br><br>
+                    <span class="say">由起点到夜晚，由山野到书房，一切问题的答案都很简单。</span><br><br>
+                    <span class="say">我希望有个如你一般的人，贯彻未来，数遍生命的公路牌。</span><br><br>
+                    <span class="say"><span class="space"></span> --XXXXX--</span><br>
+                    <span class="say">
+                        <h1>生日快乐!</h1>
+                    </span><br>
+                </div>
+            </div>
+            <!--音乐-->
+            <div class="play_yinfu" id="audio_btn" style="display: block;z-index:999999;">
+                <div id="yinfu" class="rotate"></div>
+                <audio preload="auto" autoplay="" id="media" src="media/love.mp3"
+                autoplay preload loop="loop" controls></audio>
+            </div>
+            <!-- 时钟 -->
+            <div id="clock-box">
+                <div id="clock"></div>
+            </div>
+            <div id="lovePicture">
+                <img src="images/xiao_.png" width="590" height="570"/>
+            </div>
+            <!-- 画布 -->
+            <canvas id="canvas"></canvas>
+            <canvas id="garden"></canvas>
+        </div>
+
+    </div>
+
+    <script>
+        (function () {
+            var clockAnimate = eval(Jscex.compile("async", runClock));
+            var canvas = $('#canvas');
+            var width = canvas.width();
+            var height = canvas.height();
+            canvas.attr("width", width);
+            canvas.attr("height", height);
+
+            // var opts = {seed: {x: width / 2 - 20,color: "rgb(190, 26, 37)",scale: 2}}
+            var tree = new Tree(canvas[0], width, height);
+            var seed = tree.seed;
+            //var foot = tree.footer;
+            var hold = 1;
+            var seedAnimate = eval(Jscex.compile("async", function () {
+                seed.draw();
+                while (hold) {
+                    $await(Jscex.Async.sleep(10));
+                }
+                while (seed.canScale()) {
+                    seed.scale(0.98);
+                    $await(Jscex.Async.sleep(10));
+                }
+            }));
+
+            canvas.click(function (e) {
+                var offset = canvas.offset(), x, y;
+                x = e.pageX - offset.left;
+                y = e.pageY - offset.top;
+                if (seed.hover(x, y)) {
+                    hold = 0;
+                    canvas.unbind("click");
+                    canvas.unbind("mousemove");
+                    canvas.removeClass('hand');
+                }
+            }).mousemove(function (e) {
+                var offset = canvas.offset(), x, y;
+                x = e.pageX - offset.left;
+                y = e.pageY - offset.top;
+                canvas.toggleClass('hand', seed.hover(x, y));
+            });
+
+            var jumpAnimate = eval(Jscex.compile("async", function () {
+                var ctx = tree.ctx;
+                while (true) {
+                    tree.ctx.clearRect(0, 0, width, height);
+                    tree.jump();
+                    //foot.draw();
+                    $await(Jscex.Async.sleep(25));
+                }
+            }));
+
+            var movePicture = eval(Jscex.compile("async", function () {
+                $("#lovePicture").fadeIn(5000);
+                var img = document.getElementById("lovePicture");
+                //while (true) {
+                img.style.marginLeft = 100;
+                img.offsetHeight = 100;
+                //$await(Jscex.Async.sleep(25));
+                //}
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                clockAnimate().start();
+                // $await(seedAnimate());
+                $await(movePicture());
+
+                $("#code").show().typewriter();
+                $await(jumpAnimate());
+            }));
+
+            runAsync().start();
+        })();
+    </script>
+
+</body>
+
+</html>
